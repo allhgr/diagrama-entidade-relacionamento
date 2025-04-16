@@ -11,9 +11,10 @@ import { MateriasPrimasModule } from './materias-primas/materias-primas.module';
 import { ComprasModule } from './compras/compras.module';
 import { ItensCompraModule } from './itens-compra/itens-compra.module';
 import { EstoqueModule } from './estoque/estoque.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [UsuariosModule, ClientesModule, ProdutosModule, VendasModule, ItensVendaModule, FornecedoresModule, MateriasPrimasModule, ComprasModule, ItensCompraModule, EstoqueModule],
+  imports: [UsuariosModule, ClientesModule, ProdutosModule, VendasModule, ItensVendaModule, FornecedoresModule, MateriasPrimasModule, ComprasModule, ItensCompraModule, EstoqueModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
