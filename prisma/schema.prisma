@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuarios {
+  id              Int        @id @default(autoincrement())
+  nome            String
+  data_nascimento DateTime
+  telefone        String
+  funcao          String
+
+  vendas          Vendas[]   @relation("UsuarioVendas")
+  compras         Compras[]  @relation("UsuarioCompras")
+  estoque         Estoque[]
+}
+
+model Clientes {
+  id_cliente      Int      @id @default(autoincrement())
+  nome            String
+  telefone        String
+  data_nascimento DateTime
+
+  vendas          Vendas[]
+}
+
+model Produtos {
+  id_produto      Int          @id @default(autoincrement())
+  descricao       String
+  preco           Decimal
+  quantidade      Int
+
+  itensVenda      ItensVenda[]
+  estoque         Estoque[]
+}
+
+model Vendas {
+  id              Int         @id @default(autoincrement())
+  id_cliente      Int
+  id_usuario      Int
+  data_venda      DateTime
+
+  cliente         Clientes    @relation(fields: [id_cliente], references: [id_cliente])
+  usuario         Usuarios    @relation("UsuarioVendas", fields: [id_usuario], references: [id])
+  itens           ItensVenda[]
+}
+
+model ItensVenda {
+  id_venda        Int
+  id_produto      Int
+  quantidade      Int
+  preco_unitario  Decimal
+
+  venda           Vendas   @relation(fields: [id_venda], references: [id])
+  produto         Produtos @relation(fields: [id_produto], references: [id_produto])
+
+  @@id([id_venda, id_produto])
+}
+
+model Fornecedores {
+  id_fornecedor     Int       @id @default(autoincrement())
+  nome              String
+  tipo_fornecimento String
+  localidade        String
+
+  compras           Compras[]
+}
+
+model MateriasPrimas {
+  id_materia_prima  Int           @id @default(autoincrement())
+  descricao         String
+  preco             Decimal
+  quantidade        Int
+
+  itensCompra       ItensCompra[]
+  estoque           Estoque[]
+}
+
+model Compras {
+  id              Int         @id @default(autoincrement())
+  id_fornecedor   Int
+  id_usuario      Int
+  data_compra     DateTime
+
+  fornecedor      Fornecedores @relation(fields: [id_fornecedor], references: [id_fornecedor])
+  usuario         Usuarios     @relation("UsuarioCompras", fields: [id_usuario], references: [id])
+  itens           ItensCompra[]
+}
+
+model ItensCompra {
+  id_compra        Int
+  id_materia_prima Int
+  quantidade       Int
+  preco_unitario   Decimal
+
+  compra           Compras        @relation(fields: [id_compra], references: [id])
+  materiaPrima     MateriasPrimas @relation(fields: [id_materia_prima], references: [id_materia_prima])
+
+  @@id([id_compra, id_materia_prima])
+}
+
+model Estoque {
+  id               Int     @id @default(autoincrement())
+  id_produto       Int
+  id_materia_prima Int
+  quantidade_total Int
+  id_usuario       Int
+
+  produto          Produtos       @relation(fields: [id_produto], references: [id_produto])
+  materiaPrima     MateriasPrimas @relation(fields: [id_materia_prima], references: [id_materia_prima])
+  usuario          Usuarios       @relation(fields: [id_usuario], references: [id])
+}
